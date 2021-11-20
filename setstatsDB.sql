@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 19, 2021 at 02:01 PM
--- Server version: 10.4.11-MariaDB
--- PHP Version: 7.4.5
+-- Generation Time: Nov 20, 2021 at 11:40 PM
+-- Server version: 10.4.14-MariaDB
+-- PHP Version: 7.4.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -31,18 +31,17 @@ DROP TABLE IF EXISTS `current_lift`;
 CREATE TABLE `current_lift` (
   `lift_id` int(50) NOT NULL,
   `session_id` int(50) NOT NULL,
-  `xy` geometry DEFAULT NULL,
-  `elapsed_time` time(2) NOT NULL
+  `xy` geometry NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `current_lift`
 --
 
-INSERT INTO `current_lift` (`lift_id`, `session_id`, `xy`, `elapsed_time`) VALUES
-(1, 1, 0x000000000102000000080000000000000000000000000000000000f03f000000000000e0bf0000000000000040333333333333e3bf0000000000000840666666666666e6bf0000000000001040333333333333e3bf0000000000001440cdccccccccccdcbf00000000000018409a9999999999c9bf0000000000001c4000000000000000000000000000002040, '00:00:06.00'),
-(2, 2, 0x000000000102000000080000000000000000000000000000000000f03f000000000000e0bf0000000000000040333333333333e3bf0000000000000840666666666666e6bf0000000000001040333333333333e3bf0000000000001440cdccccccccccdcbf00000000000018409a9999999999c9bf0000000000001c4000000000000000000000000000002040, '00:00:07.00'),
-(3, 1, 0x000000000102000000080000000000000000000000000000000000f03f000000000000e0bf0000000000000040333333333333e3bf0000000000000840666666666666e6bf0000000000001040333333333333e3bf0000000000001440cdccccccccccdcbf00000000000018409a9999999999c9bf0000000000001c4000000000000000000000000000002040, '00:00:06.00');
+INSERT INTO `current_lift` (`lift_id`, `session_id`, `xy`) VALUES
+(1, 1, 0x000000000102000000080000000000000000000000000000000000f03f000000000000e0bf0000000000000040333333333333e3bf0000000000000840666666666666e6bf0000000000001040333333333333e3bf0000000000001440cdccccccccccdcbf00000000000018409a9999999999c9bf0000000000001c4000000000000000000000000000002040),
+(2, 1, 0x000000000102000000080000000000000000000000000000000000f03f000000000000e0bf0000000000000040333333333333e3bf0000000000000840666666666666e6bf0000000000001040333333333333e3bf0000000000001440cdccccccccccdcbf00000000000018409a9999999999c9bf0000000000001c4000000000000000000000000000002040),
+(3, 1, 0x000000000102000000080000000000000000000000000000000000f03f000000000000e0bf0000000000000040333333333333e3bf0000000000000840666666666666e6bf0000000000001040333333333333e3bf0000000000001440cdccccccccccdcbf00000000000018409a9999999999c9bf0000000000001c4000000000000000000000000000002040);
 
 -- --------------------------------------------------------
 
@@ -65,8 +64,7 @@ CREATE TABLE `current_session` (
 --
 
 INSERT INTO `current_session` (`session_id`, `trainee_id`, `rep_num`, `set_num`, `time`, `date`) VALUES
-(1, 1, 3, 2, '18:11:00', '2021-11-03'),
-(2, 1, 2, 1, '11:13:43', '2021-11-02');
+(1, 1, 3, 2, '18:11:00', '2021-11-03');
 
 -- --------------------------------------------------------
 
@@ -126,7 +124,8 @@ CREATE TABLE `trainee` (
 
 INSERT INTO `trainee` (`trainee_id`, `trainer_id`, `username`, `password`) VALUES
 (1, 1, 'Trainee1', 'password1'),
-(2, 2, 'Trainee2', 'password2');
+(2, 2, 'Trainee2', 'password2'),
+(7, NULL, 'Liam Denning', 'LiamPassword');
 
 -- --------------------------------------------------------
 
@@ -139,17 +138,16 @@ CREATE TABLE `trainer` (
   `trainer_id` int(50) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
-  `email` varchar(50) NOT NULL,
-  `age` int(50) NOT NULL
+  `email` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `trainer`
 --
 
-INSERT INTO `trainer` (`trainer_id`, `username`, `password`, `email`, `age`) VALUES
-(1, 'Trainer1', 'password1', 'trainer1@gmail.com', 26),
-(2, 'Trainer2', 'password2', 'trainer2@gmail.com', 32);
+INSERT INTO `trainer` (`trainer_id`, `username`, `password`, `email`) VALUES
+(1, 'Trainer1', 'password1', 'trainer1@gmail.com'),
+(2, 'Trainer2', 'password2', 'trainer2@gmail.com');
 
 --
 -- Indexes for dumped tables
@@ -203,13 +201,13 @@ ALTER TABLE `trainer`
 -- AUTO_INCREMENT for table `current_lift`
 --
 ALTER TABLE `current_lift`
-  MODIFY `lift_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `lift_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `current_session`
 --
 ALTER TABLE `current_session`
-  MODIFY `session_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `session_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `session`
@@ -221,7 +219,7 @@ ALTER TABLE `session`
 -- AUTO_INCREMENT for table `trainee`
 --
 ALTER TABLE `trainee`
-  MODIFY `trainee_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `trainee_id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `trainer`
@@ -261,7 +259,7 @@ ALTER TABLE `session`
 -- Constraints for table `trainee`
 --
 ALTER TABLE `trainee`
-  ADD CONSTRAINT `trainee_ibfk_1` FOREIGN KEY (`trainee_id`) REFERENCES `trainer` (`trainer_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
+  ADD CONSTRAINT `trainee_ibfk_2` FOREIGN KEY (`trainer_id`) REFERENCES `trainer` (`trainer_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
