@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 20, 2021 at 11:40 PM
+-- Generation Time: Nov 20, 2021 at 11:51 PM
 -- Server version: 10.4.14-MariaDB
 -- PHP Version: 7.4.10
 
@@ -68,6 +68,22 @@ INSERT INTO `current_session` (`session_id`, `trainee_id`, `rep_num`, `set_num`,
 
 -- --------------------------------------------------------
 
+
+
+--
+-- Table structure for table `session`
+--
+
+DROP TABLE IF EXISTS `session`;
+CREATE TABLE `session` (
+  `session_id` int(50) NOT NULL,
+  `best_xy` geometry NOT NULL,
+  `worst_xy` geometry NOT NULL,
+  `time` time(6) NOT NULL,
+  `rep_num` int(50) NOT NULL,
+  `set_num` int(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- --------------------------------------------------------
 --
 -- Table structure for table `history`
 --
@@ -89,21 +105,6 @@ INSERT INTO `history` (`trainee_id`, `session_id`, `date`) VALUES
 (2, 1, '2021-11-15');
 
 -- --------------------------------------------------------
-
---
--- Table structure for table `session`
---
-
-DROP TABLE IF EXISTS `session`;
-CREATE TABLE `session` (
-  `session_id` int(50) NOT NULL,
-  `best_xy` geometry NOT NULL,
-  `worst_xy` geometry NOT NULL,
-  `time` time(6) NOT NULL,
-  `rep_num` int(50) NOT NULL,
-  `set_num` int(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 -- --------------------------------------------------------
 
 --
@@ -259,7 +260,7 @@ ALTER TABLE `session`
 -- Constraints for table `trainee`
 --
 ALTER TABLE `trainee`
-  ADD CONSTRAINT `trainee_ibfk_2` FOREIGN KEY (`trainer_id`) REFERENCES `trainer` (`trainer_id`);
+  ADD CONSTRAINT `trainee_ibfk_1` FOREIGN KEY (`trainer_id`) REFERENCES `trainer` (`trainer_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
