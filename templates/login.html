@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="login">
+    <form action="{{url_for('login')}}" method="post">
+        <div class="imgcontainer">
+        </div>
+
+        <div class="container">
+          <label for="username"><b>Username</b></label>
+          <input type="text" placeholder="Enter Username" name="username" id="username" required>
+
+          <label for="password"><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+          <div class="msg">{{ msg }}</div>
+          <button type="submit" value="login">Login</button>
+          <label>
+            <input type="checkbox" checked="checked" name="remember"> Remember me
+          </label>
+        </div>
+
+
+      </form>
+      </div>
+<div class="foot" style="background-color:#f1f1f1">
+          <button type="button" class="cancelbtn">Cancel</button>
+          <span class="psw">Forgot <a href="#">password?</a></span>
+        </div>
+{% endblock %}
+    <script src="../static/js/jquery-2.1.0.min.js"></script>
+
+      <!-- Bootstrap -->
+      <script src="../static/js/popper.js"></script>
+      <script src="../static/js/bootstrap.min.js"></script>
+
+      <!-- Plugins -->
+      <script src="../static/js/scrollreveal.min.js"></script>
+      <script src="../static/js/waypoints.min.js"></script>
+      <script src="../static/js/jquery.counterup.min.js"></script>
+      <script src="../static/js/imgfix.min.js"></script>
+      <script src="../static/js/mixitup.js"></script>
+      <script src="../static/js/accordions.js"></script>
+
+      <!-- Global Init -->
+      <script src="../static/js/custom.js"></script>
+    </body>
