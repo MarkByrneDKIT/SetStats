@@ -60,7 +60,9 @@ def register():
         # Check if account exists using MySQL
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('SELECT * FROM trainee WHERE username = %s', ([username]))
-
+        exists = cursor.fetchone()
+        if exists:
+            msg = 'Account already exists!'
         # TODO - Security: Regex expressions
 
         # Account doesnt exists and the form data is valid, now insert new account into accounts table
