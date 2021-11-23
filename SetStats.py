@@ -20,6 +20,7 @@ pubnub = PubNub(pnconfig)
 
 my_channel = 'setstats-pi-channel'
 sensor_list = ['coordinates']
+data = {}
 
 mpu = mpu6050(0x68)
 
@@ -42,6 +43,7 @@ class bcolors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
 
+#beep to alert if fail
 def beep(repeat):
     for i in range(0, repeat):
         for pulse in range(60):
@@ -50,9 +52,12 @@ def beep(repeat):
             GPIO.output(BUZZER, False)
             time.sleep(0.001)
 
+# collects data from sensors and publishes to pubnub
 def collectSensorData():
+    start = time.time()
     while True:
 
+        # ultrasonic sensor setup
         GPIO.output(TRIG, 1)
         time.sleep(0.00001)
         GPIO.output(TRIG, 0)
@@ -65,22 +70,45 @@ def collectSensorData():
             pass
         stop = time.time()
 
-        xAxis = "{:.2f}".format(mpu.get_accel_data()['z'])
-        yAxis = "{:.2f}".format((stop - start) * 17000)
-        if (mpu.get_accel_data()['z'] >= 15 or mpu.get_accel_data()['z'] <= -15):
+        tilt = "{:.2f}".format(mpu.get_gyro_data()['z'])
+        sway = mpu.get_accel_data()['z']
+        height = ((stop - start) * 17000)
+
+        # at rest accelerometer doesnt read 0, this combats this by changing values between -0.75 and -0.95 to 0
+        if(sway <= -0.75 and sway >=-0.95):
+            sway = 0
+
+        """
+        When ultrasonic sensor is flush to surface, the readings are inaccurate with values such as 500cm or 2400cm. 
+        This fixes the issue by setting height to 0 if accelerometer is at rest and the value being read in is less than 150.        
+        """
+        if(height > 150 and sway <= 1.5 and sway >= -1.5):
+            height = 0
+
+        # If the accelerometer reads higher than 15cm or less than -15cm, it's considered a fail and user is alerted.
+        if (sway >= 15 or sway <= -15):
             messageColour = bcolors.FAIL
             beep(1)
-        elif (mpu.get_accel_data()['z'] > 5 and mpu.get_accel_data()['z'] < 15 or mpu.get_accel_data()['z'] < -5 and mpu.get_accel_data()['z'] < -15):
+        # If the accelerometer reads higher than 5 but less than 15 and vice versa, it is considered a "good" lift.
+        elif (sway > 5 and sway < 15 or sway < -5 and sway < -15):
             messageColour = bcolors.WARNING
+        # Otherwise it is considered a "perfect" lift
         else:
             messageColour = bcolors.OKGREEN
 
-        print(messageColour + f"{'{:.2f}'.format(mpu.get_accel_data()['z'])}" + bcolors.ENDC)
-        print(messageColour + f"{'{:.2f}'.format((stop - start) * 17000)}" + bcolors.ENDC)
+        print(messageColour + f"{'{:.2f}'.format(sway)}" + "cm" + bcolors.ENDC)
+        print(messageColour + f"{'{:.2f}'.format(height)}" + "cm" + bcolors.ENDC)
         print("")
 
-        publish(my_channel, {"coordinates": f"{xAxis}, {yAxis}"})
+        current_time = (time.time() - start)
+        sway = f"{'{:.2f}'.format(sway)}"
+        height = f"{'{:.2f}'.format(height)}"
+
+        # Publishes coords to pubnub
+        publish(my_channel, {"coordinates": f"{sway}, {height}"})
+        # Time between each reading
         time.sleep(.175)
+    end = time.time()
     print(end - start)
 
 def publish(channel, msg):
