@@ -47,5 +47,26 @@ def login():
     return render_template('login.html', msg=msg)
 
 
+@app.route('/register/', methods=['GET', 'POST'])
+def register():
+    # Output message if something goes wrong...
+    msg = ''
 
+    # Check if "username", "password" and "email" POST requests exist (user submitted form)
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        # Create variables for easy access
+        username = request.form['username']
+        password = request.form['password']
+        # Check if account exists using MySQL
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM trainee WHERE username = %s', ([username]))
+
+        # TODO - Security: Regex expressions
+
+        # Account doesnt exists and the form data is valid, now insert new account into accounts table
+        cursor.execute('INSERT INTO trainee (username, password) VALUES (%s, %s)', ([username], [password]))
+        mysql.connection.commit()
+        msg = 'You have successfully registered!'
+
+    return render_template('register.html', msg=msg)
 app.run(debug=True)
