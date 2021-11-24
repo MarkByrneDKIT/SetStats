@@ -15,9 +15,24 @@ app.config['MYSQL_DB'] = 'setstats'
 mysql = MySQL(app)
 @app.route('/')
 def index():
+    return checkLoginOrRedirect('index.html')
+
+@app.route('/deadlift')
+def deadlift():
+    return checkLoginOrRedirect('deadlift.html')
+
+@app.route('/squad')
+def squad():
+    return checkLoginOrRedirect('squad.html')
+
+@app.route('/history')
+def history():
+    return checkLoginOrRedirect('history.html')
+
+def checkLoginOrRedirect(template):
     if session.get('loggedin') is None or (session.get('loggedin') == False):
             return redirect("/login")
-    return render_template('index.html')
+    return render_template(template)
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -40,8 +55,7 @@ def login():
             session['trainee_id'] = trainee['trainee_id']
             session['username'] = trainee['username']
 
-            redirect("/")
-            return render_template("index.html")
+            return redirect("/")
         else:
             # Account doesnt exist or username/password incorrect
             msg = 'Incorrect username/password!'
