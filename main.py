@@ -15,6 +15,8 @@ app.config['MYSQL_DB'] = 'setstats'
 mysql = MySQL(app)
 @app.route('/')
 def index():
+    if session.get('loggedin') is None or (session.get('loggedin') == False):
+            return redirect("/login")
     return render_template('index.html')
 
 @app.route('/login/', methods=['GET', 'POST'])
@@ -38,8 +40,7 @@ def login():
             session['trainee_id'] = trainee['trainee_id']
             session['username'] = trainee['username']
 
-            return 'Logged in successfully!'
-
+            return render_template("index.html")
         else:
             # Account doesnt exist or username/password incorrect
             msg = 'Incorrect username/password!'
