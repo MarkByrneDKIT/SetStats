@@ -40,6 +40,7 @@ def login():
             session['trainee_id'] = trainee['trainee_id']
             session['username'] = trainee['username']
 
+            redirect("/")
             return render_template("index.html")
         else:
             # Account doesnt exist or username/password incorrect
