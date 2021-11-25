@@ -70,7 +70,7 @@ def collectSensorData():
             pass
         stop = time.time()
 
-        tilt = "{:.2f}".format(mpu.get_gyro_data()['z'])
+        tilt = mpu.get_gyro_data()['z']
         sway = mpu.get_accel_data()['z']
         height = ((stop - start) * 17000)
 
@@ -96,16 +96,19 @@ def collectSensorData():
         else:
             messageColour = bcolors.OKGREEN
 
+        print(bcolors.BOLD + f"{'{:.2f}'.format(tilt)}" + bcolors.ENDC)
         print(messageColour + f"{'{:.2f}'.format(sway)}" + "cm" + bcolors.ENDC)
         print(messageColour + f"{'{:.2f}'.format(height)}" + "cm" + bcolors.ENDC)
         print("")
 
         current_time = (time.time() - start)
+        tilt = f"{'{:.2f}'.format(tilt)}"
         sway = f"{'{:.2f}'.format(sway)}"
         height = f"{'{:.2f}'.format(height)}"
 
         # Publishes coords to pubnub
-        publish(my_channel, {"coordinates": f"{sway}, {height}"})
+        publish(my_channel, {"tilt": tilt})
+        publish(my_channel, {"coordinates": {"sway":sway, "height":height}})
         # Time between each reading
         time.sleep(.175)
     end = time.time()
