@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
+import re
 
 app = Flask(__name__)
 
@@ -82,12 +83,15 @@ def register():
         exists = cursor.fetchone()
         if exists:
             msg = 'Account already exists!'
-        # TODO - Security: Regex expressions
 
-        # Account doesnt exists and the form data is valid, now insert new account into accounts table
-        cursor.execute('INSERT INTO trainee (username, password) VALUES (%s, %s)', ([username], [password]))
-        mysql.connection.commit()
-        msg = 'You have successfully registered!'
+        else:
+            if re.match(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$", password):
+                # Account doesnt exists and the form data is valid, now insert new account into accounts table
+                cursor.execute('INSERT INTO trainee (username, password) VALUES (%s, %s)', ([username], [password]))
+                mysql.connection.commit()
+                msg = 'You have successfully registered!'
+                return render_template('index.html')
+            msg = 'Password needs to have minimum six characters, at least one letter and one number'
 
     return render_template('register.html', msg=msg)
 app.run(debug=True)
