@@ -1,6 +1,8 @@
 .chart{
+width: 100%;
+left: 2.5%;
 position: absolute;
-top: 20%;
+top: 30%;
 transform: rotate(270deg);
 
 }
