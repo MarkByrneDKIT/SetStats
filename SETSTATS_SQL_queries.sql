@@ -43,6 +43,7 @@ SELECT * FROM history WHERE trainee_id = 1
 
 --Select the lift bar co-ordinates in current lift by id of lift
 SELECT ST_AsText(xy) FROM `current_session` JOIN `current_lift` WHERE lift_id = 1    -- NOW DISPLAYING CORRECLTY NOT .BIN FILE
+SELECT ST_AsGeoJSON(xy) FROM `current_session` JOIN `current_lift` WHERE lift_id = 1
 
 
 --https://stackoverflow.com/questions/34911046/getting-geojson-linestring-from-mysql-geometry-wkt-data
