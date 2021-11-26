@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<div id="lift_chart"></div>
+<script type="text/javascript">
+var __eon_pubnub = new PubNub({
+  subscribeKey: "sub-c-76598f48-3f26-11ec-b886-526a8555c638",
+  authkey: "SetStatsChart",
+});
+var __eon_cols = ["sway", "height"];
+var __eon_labels = {};
+chart = eon.chart({
+  pubnub: __eon_pubnub,
+  channels: ["setstats-pi-channel"],
+  history: false,
+  flow: true,
+  rate: 1000,
+  limit: 5,
+  generate: {
+    bindto: "#lift_chart",
+    data: {
+      colors: {"sway":"#D70060","height":"#E54028"},
+      type: "spline"
+    },
+    transition: {
+      duration: 1000
+    },
+    axis: {
+      x: {
+        label: ""
+      },
+      y: {
+        label: ""
+      }
+    },
+    grid: {
+      x: {
+        show: false
+      },
+      y: {
+        show: false
+      }
+    },
+    tooltip: {
+     show: true
+    },
+    point: {
+      show: true
+    }
+  },
+  transform: function(message) {
+    var msg = JSON.stringify(message);
+    if(json_data.hasOwnProperty('coordinates')){
+        var json_data = JSON.parse(msg);
+        var message = eon.c.flatten(message.eon);
+        var o = {};
+        for(index in message) {
+          if(__eon_cols.indexOf(index) > -1){
+            o[__eon_labels[index] || index] = message[index];
+          }
+    }
+    return {
+      eon: o
+    };
+  }
+  }
+});
+</script>
+
+                <div class="main-button-start">
+                    <a href="">Start Lift</a>
+                </div>
+{% endblock %}

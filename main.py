@@ -11,21 +11,24 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'setstats'
 
+#from . import myDB, PB
+#PB.grant_access("SetStatsChart", True, True)
+
 # Intialize MySQL
 mysql = MySQL(app)
 @app.route('/')
 def index():
     return checkLoginOrRedirect('index.html')
 
-@app.route('/deadlift')
+@app.route('/deadlift/')
 def deadlift():
     return checkLoginOrRedirect('deadlift.html')
 
-@app.route('/squad')
+@app.route('/graph/')
 def squad():
-    return checkLoginOrRedirect('squad.html')
+    return checkLoginOrRedirect('graph.html')
 
-@app.route('/history')
+@app.route('/history/')
 def history():
     return checkLoginOrRedirect('history.html')
 

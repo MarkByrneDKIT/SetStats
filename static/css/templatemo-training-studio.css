@@ -190,6 +190,26 @@ body {
   transition: all .3s;
 }
 
+.main-button-start{
+left: 50%;
+}
+.main-button-start a {
+margin: 0 auto;
+justify-content: center;
+  display: inline-block;
+  font-size: 15px;
+  padding: 12px 20px;
+  background-color: #274690;
+  color: #fff;
+  text-align: center;
+  font-weight: 400;
+  text-transform: uppercase;
+  transition: all .3s;
+  margin-left: auto;
+  margin-right: auto;
+  left: 50%;
+}
+
 .main-button a:hover {
   background-color: #576CA8;
 }
