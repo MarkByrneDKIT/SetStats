@@ -12,36 +12,44 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'setstats'
 
-#from . import myDB, PB
-#PB.grant_access("SetStatsChart", True, True)
+# from . import myDB, PB
+# PB.grant_access("SetStatsChart", True, True)
 
 # Intialize MySQL
 mysql = MySQL(app)
+
+
 @app.route('/')
 def index():
     return checkLoginOrRedirect('index.html')
+
 
 @app.route('/deadlift/')
 def deadlift():
     return checkLoginOrRedirect('deadlift.html')
 
+
 @app.route('/graph/')
 def squad():
     return checkLoginOrRedirect('graph.html')
+
 
 @app.route('/history/')
 def history():
     return checkLoginOrRedirect('history.html')
 
+
 def checkLoginOrRedirect(template):
     if session.get('loggedin') is None or (session.get('loggedin') == False):
-            return redirect("/login")
+        return redirect("/login")
     return render_template(template)
+
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     # Output message
     msg = ''
+
 
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
 
@@ -86,7 +94,7 @@ def register():
 
         else:
             if re.match(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$", password):
-                # Account doesnt exists and the form data is valid, now insert new account into accounts table
+                # Account doesnt exists and the form data is valid, now insert new account into trainee table
                 cursor.execute('INSERT INTO trainee (username, password) VALUES (%s, %s)', ([username], [password]))
                 mysql.connection.commit()
                 msg = 'You have successfully registered!'
@@ -94,4 +102,76 @@ def register():
             msg = 'Password needs to have minimum six characters, at least one letter and one number'
 
     return render_template('register.html', msg=msg)
+
+
+@app.route('/trainerLogin/', methods=['GET', 'POST'])
+def trainerLogin():
+    # Output message
+    msg = ''
+
+
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+
+        username = request.form['username']
+        password = request.form['password']
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM trainer WHERE username = %s AND password = %s', (username, password,))
+        # Fetch  record and return result
+        trainer = cursor.fetchone()
+        # If account exists in trainer table in  database
+        if trainer:
+            # Create session data
+            session['loggedin'] = True
+            session['trainer_id'] = trainer['trainer_id']
+            session['username'] = trainer['username']
+
+            return redirect("/")
+        else:
+            # Account doesnt exist or username/password incorrect
+            msg = 'Incorrect username/password!'
+
+    return render_template('trainerLogin.html', msg=msg)
+
+@app.route('/trainerRegister/', methods=['GET', 'POST'])
+def trainerRegister():
+    # Output message if something goes wrong...
+    msg = ''
+
+    # Check if "username", "password" and "email" POST requests exist (user submitted form)
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        # Create variables for easy access
+        email = request.form['email']
+        username = request.form['username']
+        password = request.form['password']
+        # Check if account exists using MySQL
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM trainer WHERE username = %s', ([username]))
+        exists = cursor.fetchone()
+        if exists:
+            msg = 'Account already exists!'
+
+        else:
+            if re.match(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$", password):
+                # Account doesnt exists and the form data is valid, now insert new account into trainer table
+                cursor.execute('INSERT INTO trainer (username, password, email) VALUES (%s, %s, %s)', ([username], [password],[email]))
+                mysql.connection.commit()
+                msg = 'You have successfully registered!'
+                return render_template('index.html')
+            msg = 'Password needs to have minimum six characters, at least one letter and one number'
+
+    return render_template('trainerRegister.html', msg=msg)
+
+
+@app.route('/logout')
+def logout():
+
+    session.pop('loggedin', None)
+    session.pop('trainee_id', None)
+    session.pop('username', None)
+
+
+    return redirect(url_for('login'))
+
+
 app.run(debug=True)

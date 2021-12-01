@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    <div class="reg">
+    <form action="{{url_for('trainerLogin')}}" method="post">
+        <div class="imgcontainer">
+        </div>
+
+        <div class="container">
+          <label for="username"><b>Username</b></label>
+          <input type="text" placeholder="Enter Username" name="username" id="username" required>
+
+          <label for="password"><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" name="password" id="password" required>
+
+          <div class="msg">{{ msg }}</div>
+          <button type="submit" value="trainerLogin">Login</button>
+
+        </div>
+
+
+      </form>
+      </div>
+
+{% endblock %}

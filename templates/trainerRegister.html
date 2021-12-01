@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+    <div class="reg">
+    <form action="{{ url_for('trainerRegister') }}" method="post">
+        <div class="imgcontainer">
+        </div>
+
+        <div class="container">
+
+          <label for="email"><b>Email Address</b></label>
+          <input type="text" placeholder="Enter Email" name="email" id="email" >
+
+          <label for="username"><b>Username</b></label>
+          <input type="text" placeholder="Enter Username" name="username" id="username" >
+
+
+          <label for="password"><b>Password</b></label>
+          <input type="password" placeholder="Enter Password" name="password" id="password" >
+
+          <label for="confirm"><b>Confirm Password</b></label>
+          <input type="password" placeholder="Enter Password" name="password" id="confirm">
+
+            <div class="msg">{{ msg }}</div>
+
+          <button type="submit" value="trainerRegister" onclick="trainerRegister">Register</button>
+
+        </div>
+
+      </form>
+      </div>
+{% endblock %}
