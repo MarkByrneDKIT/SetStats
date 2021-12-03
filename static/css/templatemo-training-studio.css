@@ -1267,3 +1267,25 @@ responsive
     margin-left: 130px;
   }
 }
+
+
+.lift {
+  display: inline-block;
+  margin-right: 10px;
+  background: #339DFF;
+  color: #fff;
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 38px;
+  border-radius: 50px;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  width: 170px;
+  text-align: center;
+}
+
+.lift:hover {
+  background: #fff;
+  color: #339DFF;
+  box-shadow: 0 4px 4px rgba(83, 100, 255, 0.32);
+}
