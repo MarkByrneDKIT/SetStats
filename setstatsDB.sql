@@ -83,6 +83,14 @@ CREATE TABLE `session` (
   `rep_num` int(50) NOT NULL,
   `set_num` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `current_session`
+--
+
+INSERT INTO `session` (`session_id`, `best_xy`, `worst_xy`, `time`, `rep_num`, `set_num`) VALUES 
+('1', ST_GeomFromText('LINESTRING(0 1,-0.5 2,-0.6 3,-0.7 4,-0.6 5,-0.45 6,-0.2 7,0 8)'), ST_GeomFromText('LINESTRING(0 1,-0.5 2,-0.6 3,-1 4,-0.6 5,-0.5 6,-0.3 7,0 8)'), '00:12:00.000000', '12', '3'),
+('2', ST_GeomFromText('LINESTRING(0 1,-0.5 2,-0.6 3,-0.7 4,-0.6 5,-0.45 6,-0.2 7,0 8)'), ST_GeomFromText('LINESTRING(0 1,-0.5 2,-0.6 3,-1 4,-0.6 5,-0.5 6,-0.3 7,0 8)'), '00:12:00.000000', '12', '3');
 -- --------------------------------------------------------
 --
 -- Table structure for table `history`
