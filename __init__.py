@@ -54,7 +54,7 @@ def login():
         password = request.form['password']
 
         cursor = mysql.cursor(dictionary=True)
-        cursor.execute('SELECT * FROM trainee WHERE username = %s AND password = %s', (username, password,))
+        cursor.execute('SELECT * FROM trainee WHERE username = %s AND password = %s', (username, password))
         # Fetch  record and return result
         trainee = cursor.fetchone()
         # If account exists in trainee table in  database
@@ -84,7 +84,7 @@ def register():
         password = request.form['password']
         # Check if account exists using MySQL
         cursor = mysql.cursor(dictionary=True)
-        cursor.execute('SELECT username FROM trainee WHERE username = %s', (username,))
+        cursor.execute('SELECT username FROM trainee WHERE username = %s', (username))
         exists = cursor.fetchone()
         if exists:
             msg = 'Account already exists!'
@@ -92,7 +92,7 @@ def register():
         else:
             if re.match(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$", password):
                 # Account doesnt exists and the form data is valid, now insert new account into accounts table
-                cursor.execute('INSERT INTO trainee (username, password) VALUES (%s, %s)', (username, password,))
+                cursor.execute('INSERT INTO trainee (username, password) VALUES (%s, %s)', (username, password))
                 mysql.commit()
                 msg = 'You have successfully registered!'
                 return render_template('index.html')
@@ -113,7 +113,7 @@ def trainerLogin():
         password = request.form['password']
 
         cursor = mysql.cursor(dictionary=True)
-        cursor.execute('SELECT * FROM trainer WHERE username = %s AND password = %s', (username, password,))
+        cursor.execute('SELECT * FROM trainer WHERE username = %s AND password = %s', (username, password))
         # Fetch  record and return result
         trainer = cursor.fetchone()
         # If account exists in trainer table in  database
