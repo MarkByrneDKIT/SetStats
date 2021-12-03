@@ -4,7 +4,6 @@ import threading
 import logging
 import time
 
-
 logging.basicConfig(level=logging.INFO)
 
 from pubnub.callbacks import SubscribeCallback
@@ -19,7 +18,7 @@ pnconfig.uuid = '590f83a0-2b19-4e7f-9cef-09882f022320'
 pubnub = PubNub(pnconfig)
 
 my_channel = 'setstats-pi-channel'
-sensor_list = ['coordinates']
+sensor_list = ['lift']
 data = {}
 
 mpu = mpu6050(0x68)
@@ -51,66 +50,73 @@ def beep(repeat):
             time.sleep(0.001)
             GPIO.output(BUZZER, False)
             time.sleep(0.001)
+        time.sleep(0.25)
 
 # collects data from sensors and publishes to pubnub
 def collectSensorData():
+    data["start"] = False
     start = time.time()
     while True:
+        if data["start"]:
+            try:
+                # ultrasonic sensor setup
+                GPIO.output(TRIG, 1)
+                time.sleep(0.00001)
+                GPIO.output(TRIG, 0)
 
-        # ultrasonic sensor setup
-        GPIO.output(TRIG, 1)
-        time.sleep(0.00001)
-        GPIO.output(TRIG, 0)
+                while GPIO.input(ECHO) == 0:
+                    pass
+                start = time.time()
 
-        while GPIO.input(ECHO) == 0:
-            pass
-        start = time.time()
+                while GPIO.input(ECHO) == 1:
+                    pass
+                stop = time.time()
 
-        while GPIO.input(ECHO) == 1:
-            pass
-        stop = time.time()
+                tilt = mpu.get_gyro_data()['z']
+                sway = mpu.get_accel_data()['z']
+                height = ((stop - start) * 17000)
 
-        tilt = mpu.get_gyro_data()['z']
-        sway = mpu.get_accel_data()['z']
-        height = ((stop - start) * 17000)
+                # at rest accelerometer doesnt read 0, this combats this by changing values between -0.75 and -0.95 to 0
+                if(sway <= -0.75 and sway >=-0.95):
+                    sway = 0
 
-        # at rest accelerometer doesnt read 0, this combats this by changing values between -0.75 and -0.95 to 0
-        if(sway <= -0.75 and sway >=-0.95):
-            sway = 0
+                """
+                When ultrasonic sensor is flush to surface, the readings are inaccurate with values such as 500cm or 2400cm. 
+                This fixes the issue by setting height to 0 if accelerometer is at rest and the value being read in is less than 150.
+                """
 
-        """
-        When ultrasonic sensor is flush to surface, the readings are inaccurate with values such as 500cm or 2400cm. 
-        This fixes the issue by setting height to 0 if accelerometer is at rest and the value being read in is less than 150.        
-        """
-        if(height > 150 and sway <= 1.5 and sway >= -1.5):
-            height = 0
+                if(height > 150 and sway <= 1.5 and sway >= -1.5):
+                    height = 0
 
-        # If the accelerometer reads higher than 15cm or less than -15cm, it's considered a fail and user is alerted.
-        if (sway >= 15 or sway <= -15):
-            messageColour = bcolors.FAIL
-            beep(1)
-        # If the accelerometer reads higher than 5 but less than 15 and vice versa, it is considered a "good" lift.
-        elif (sway > 5 and sway < 15 or sway < -5 and sway < -15):
-            messageColour = bcolors.WARNING
-        # Otherwise it is considered a "perfect" lift
-        else:
-            messageColour = bcolors.OKGREEN
+                # If the accelerometer reads higher than 15cm or less than -15cm, it's considered a fail and user is alerted.
+                if (sway >= 3 or sway <= -3):
+                    messageColour = bcolors.FAIL
+                    beep(1)
+                # If the accelerometer reads higher than 5 but less than 15 and vice versa, it is considered a "good" lift.
+                elif (sway > 2 and sway < 3 or sway < -2 and sway < -3):
+                    messageColour = bcolors.WARNING
+                # Otherwise it is considered a "perfect" lift
+                else:
+                    messageColour = bcolors.OKGREEN
 
-        print(bcolors.BOLD + f"{'{:.2f}'.format(tilt)}" + bcolors.ENDC)
-        print(messageColour + f"{'{:.2f}'.format(sway)}" + "cm" + bcolors.ENDC)
-        print(messageColour + f"{'{:.2f}'.format(height)}" + "cm" + bcolors.ENDC)
-        print("")
+                print(bcolors.BOLD + f"{'{:.2f}'.format(tilt)}" + bcolors.ENDC)
+                print(messageColour + f"{'{:.2f}'.format(sway)}" + "cm" + bcolors.ENDC)
+                print(messageColour + f"{'{:.2f}'.format(height)}" + "cm" + bcolors.ENDC)
+                print("")
 
-        current_time = (time.time() - start)
-        tilt = f"{'{:.2f}'.format(tilt)}"
-        sway = f"{'{:.2f}'.format(sway)}"
-        height = f"{'{:.2f}'.format(height)}"
+                current_time = (time.time() - start)
+                tilt = f"{'{:.2f}'.format(tilt)}"
+                sway = f"{'{:.2f}'.format(sway)}"
+                height = f"{'{:.2f}'.format(height)}"
 
-        # Publishes coords to pubnub
-        publish(my_channel, {"tilt": tilt})
-        publish(my_channel, {"coordinates": {"sway":sway, "height":height}})
-        # Time between each reading
-        time.sleep(.175)
+                # Publishes coords to pubnub
+                publish(my_channel, {"tilt": tilt})
+                publish(my_channel, {"coordinates": {"sway":sway, "height":height}})
+                # Time between each reading
+                time.sleep(.15)
+            except Exception:
+                print(Exception)
+
     end = time.time()
     print(end - start)
 
@@ -162,12 +168,16 @@ class MySubscribeCallback(SubscribeCallback):
 
     def handle_event(self, msg):
         global data
-        event_data = msg["event"]
-        key = list(event_data.keys())
-        print(key)
-        print(key[0])
+        eventData = msg["event"]
+        key = list(eventData.keys())
+        value = list(eventData.values())
         if key[0] in sensor_list:
-            print(event_data[key[0]])
+            if value[0] == "ON":
+                print("Starting Lift")
+                data["start"] = True
+            elif value[0] == "OFF":
+                print("Stopping Lift")
+                data["start"] = False
 
 if __name__ == '__main__':
     sensors_thread = threading.Thread(target=collectSensorData)
