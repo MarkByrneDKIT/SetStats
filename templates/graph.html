@@ -67,7 +67,9 @@ chart = eon.chart({
 });
 </script>
 
-                <div class="main-button-start">
-                    <a href="">Start Lift</a>
-                </div>
+        <body onload="keepAlive(); time();">
+		<div>
+			<input type="checkbox" id="buzzer" onclick="handleClick(this);"/>
+			<label for = "Buzzer_On">Start Lift</label>
+		</div>
 {% endblock %}
