@@ -34,15 +34,37 @@ def squad():
     return checkLoginOrRedirect('graph.html')
 
 
-@app.route('/history/')
-def history():
+@app.route('/session/')
+def sessionRedirect():
+    return history()
+
+
+@app.route('/sessions/<id>')
+def sessionselection(id):
     return checkLoginOrRedirect('history.html')
+
+
+@app.route('/sessions/')
+def history():
+
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    traineeid = session['trainee_id']
+    cursor.execute('SELECT * FROM history WHERE trainee_id = %s', str(traineeid))
+    data = cursor.fetchall()
+
+    return checkLoginOrRedirectWithData('session_selection.html', data)
 
 
 def checkLoginOrRedirect(template):
     if session.get('loggedin') is None or (session.get('loggedin') == False):
         return redirect("/login")
     return render_template(template)
+
+
+def checkLoginOrRedirectWithData(template, data):
+    if session.get('loggedin') is None or (session.get('loggedin') == False):
+        return redirect("/login")
+    return render_template(template, data = data)
 
 
 @app.route('/login/', methods=['GET', 'POST'])

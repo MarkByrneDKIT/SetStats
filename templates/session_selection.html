@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+    <div class="main-banner" id="top">
+        <video autoplay muted loop id="bg-video">
+            <source src="../static/images/dd.mp4" type="video/mp4" />
+        </video>
+
+        <div class="caption">
+
+            {% for row in data %}
+                <div class="main-button scroll-to-section">
+                    <a href="{{ url_for('sessionselection' ,id=row['session_id'] ) }}">Session {{row['session_id']}}</a>
+                </div>
+            <br>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+{% endblock %}
