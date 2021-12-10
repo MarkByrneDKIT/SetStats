@@ -124,17 +124,18 @@ CREATE TABLE `trainee` (
   `trainee_id` int(50) NOT NULL,
   `trainer_id` int(50) DEFAULT NULL,
   `username` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL
+  `password` varchar(50) NOT NULL,
+  `login_status` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `trainee`
 --
 
-INSERT INTO `trainee` (`trainee_id`, `trainer_id`, `username`, `password`) VALUES
-(1, 1, 'Trainee1', 'password1'),
-(2, 2, 'Trainee2', 'password2'),
-(7, NULL, 'Liam Denning', 'LiamPassword');
+INSERT INTO `trainee` (`trainee_id`, `trainer_id`, `username`, `password`, `login_status`) VALUES
+(1, 1, 'Trainee1', 'password1', 0),
+(2, 2, 'Trainee2', 'password2', 0),
+(7, NULL, 'Liam Denning', 'LiamPassword', 0);
 
 -- --------------------------------------------------------
 
@@ -147,16 +148,17 @@ CREATE TABLE `trainer` (
   `trainer_id` int(50) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
-  `email` varchar(50) NOT NULL
+  `email` varchar(50) NOT NULL,
+  `login_status` int(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `trainer`
 --
 
-INSERT INTO `trainer` (`trainer_id`, `username`, `password`, `email`) VALUES
-(1, 'Trainer1', 'password1', 'trainer1@gmail.com'),
-(2, 'Trainer2', 'password2', 'trainer2@gmail.com');
+INSERT INTO `trainer` (`trainer_id`, `username`, `password`, `email`, `login_status`) VALUES
+(1, 'Trainer1', 'password1', 'trainer1@gmail.com', 0),
+(2, 'Trainer2', 'password2', 'trainer2@gmail.com', 0);
 
 --
 -- Indexes for dumped tables
