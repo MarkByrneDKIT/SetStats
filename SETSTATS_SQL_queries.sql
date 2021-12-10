@@ -42,7 +42,7 @@ SELECT * FROM history WHERE trainee_id = 1
 
 
 --Select the lift bar co-ordinates in current lift by id of lift
-SELECT ST_AsText(xy) FROM `current_session` JOIN `current_lift` WHERE lift_id = 1    -- NOW DISPLAYING CORRECLTY NOT .BIN FILE
+SELECT ST_AsText(xy) FROM `current_session` JOIN `current_lift` WHERE lift_id = 1  -- NOW DISPLAYING CORRECLTY NOT .BIN FILE
 SELECT ST_AsGeoJSON(xy) FROM `current_session` JOIN `current_lift` WHERE lift_id = 1
 
 
@@ -54,10 +54,15 @@ SELECT ST_AsGeoJSON(xy) FROM `current_session` JOIN `current_lift` WHERE lift_id
 
 
 
---INSERT STATEMENTS ONLY --
 INSERT INTO `trainee` (`username`,`password`) VALUES ("Liam Denning", "LiamPassword")  --No trainer
 
 INSERT INTO `trainee` (`trainer_id`,`username`,`password`) VALUES (1, "Liam Denning", "LiamPassword") --with trainer
+
+
+--hashing passwords 
+INSERT INTO `trainee` (`username`,`password`) VALUES ("EncryptTest", PASSWORD('password')) 
+SELECT * FROM `trainee` WHERE PASSWORD = PASSWORD("password")
+
 
 
 -- Add bar positions to current lift table using Geometry LineString
@@ -66,7 +71,7 @@ INSERT INTO `current_lift` (`lift_id`,`session_id`, `xy`) VALUES (3,1, ST_GeomFr
 INSERT INTO `current_lift` (`lift_id`, `session_id`, `xy`) VALUES (4, 1, ST_GeomFromText('LINESTRING(1 0,1 1,1 2,2 3,2 4,1.5 5,1 6,.5 7,0 8)'))		-- SETS XY TO NULL BUT SHOULD BE WORKING IDK WHY
 
 
-
+INSERT INTO `session` (`session_id`, `best_xy`, `worst_xy`, `time`, `rep_num`, `set_num`) VALUES ('1', ST_GeomFromText('LINESTRING(0 1,-0.5 2,-0.6 3,-0.7 4,-0.6 5,-0.45 6,-0.2 7,0 8)'), ST_GeomFromText('LINESTRING(0 1,-0.5 2,-0.6 3,-1 4,-0.6 5,-0.5 6,-0.3 7,0 8)'), '00:12:00.000000', '12', '3')
 
 
 
