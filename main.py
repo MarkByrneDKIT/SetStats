@@ -33,12 +33,6 @@ def deadlift():
 def squad():
     return checkLoginOrRedirect('graph.html')
 
-
-@app.route('/session/')
-def sessionRedirect():
-    return history()
-
-
 @app.route('/sessions/<id>')
 def sessionselection(id):
     return checkLoginOrRedirect('history.html')
@@ -46,6 +40,8 @@ def sessionselection(id):
 
 @app.route('/sessions/')
 def history():
+    if not loggedIn():
+        return redirect("/")
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     traineeid = session['trainee_id']
@@ -54,6 +50,14 @@ def history():
 
     return checkLoginOrRedirectWithData('session_selection.html', data)
 
+@app.route('/<path:dummy>')
+def fallback(dummy=None):
+    return redirect("/")
+
+def loggedIn():
+    if session.get('loggedin') is None or (session.get('loggedin') == False):
+        return False
+    return True
 
 def checkLoginOrRedirect(template):
     if session.get('loggedin') is None or (session.get('loggedin') == False):
