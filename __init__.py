@@ -2,6 +2,7 @@ import MySQLdb
 from flask import Flask, render_template, request, redirect, url_for, session
 import mysql.connector
 import re
+import hashlib
 
 app = Flask(__name__)
 
@@ -82,6 +83,7 @@ def register():
         # Create variables for easy access
         username = request.form['username']
         password = request.form['password']
+        hash_pass = hashlib.md5(password.encode("utf-8")).hexdigest()
         # Check if account exists using MySQL
         cursor = mysql.cursor(dictionary=True)
         cursor.execute('SELECT username FROM trainee WHERE username = %s', (username,))
@@ -92,7 +94,7 @@ def register():
         else:
             if re.match(r"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$", password):
                 # Account doesnt exists and the form data is valid, now insert new account into accounts table
-                cursor.execute('INSERT INTO trainee (username, password) VALUES (%s, %s)', (username, password,))
+                cursor.execute('INSERT INTO trainee (username, password) VALUES (%s, %s)', (username, hash_pass,))
                 mysql.commit()
                 msg = 'You have successfully registered!'
                 return render_template('index.html')
