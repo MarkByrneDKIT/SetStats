@@ -1,8 +1,9 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<div id="lift_chart"></div>
+<div id="lift_chart"  style="margin-top:20%"></div>
 <script type="text/javascript">
+
 var __eon_pubnub = new PubNub({
   subscribeKey: "sub-c-76598f48-3f26-11ec-b886-526a8555c638",
   authkey: "SetStatsChart",
@@ -20,17 +21,17 @@ chart = eon.chart({
     bindto: "#lift_chart",
     data: {
       colors: {"sway":"#D70060","height":"#E54028"},
-      type: "spline"
+      type: "line"
     },
     transition: {
-      duration: 1000
+      duration: 100
     },
     axis: {
       x: {
-        label: ""
+        label: "sway"
       },
       y: {
-        label: ""
+        label: "height"
       }
     },
     grid: {
@@ -50,20 +51,21 @@ chart = eon.chart({
   },
   transform: function(message) {
     var msg = JSON.stringify(message);
-    if(json_data.hasOwnProperty('coordinates')){
-        var json_data = JSON.parse(msg);
-        var message = eon.c.flatten(message.eon);
+    var json_data = JSON.parse(msg);
+   if(json_data.hasOwnProperty('coordinates')){
+
+        //var message = eon.c.flatten(message.eon);
         var o = {};
-        for(index in message) {
-          if(__eon_cols.indexOf(index) > -1){
-            o[__eon_labels[index] || index] = message[index];
-          }
+        o["sway"] = json_data.coordinates.sway;
+        o["height"] = json_data.coordinates.height;
+
     }
     return {
       eon: o
     };
-  }
-  }
+
+  },
+
 });
 </script>
 		<div>
