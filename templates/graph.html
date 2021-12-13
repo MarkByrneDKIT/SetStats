@@ -1,7 +1,17 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<div id="lift_chart"  style="margin-top:20%"></div>
+<style>
+
+      .rotated {
+        -webkit-transform: rotate(90deg);
+        -moz-transform: rotate(90deg);
+        -o-transform: rotate(90deg);
+        transform: rotate(90deg);
+      }
+
+</style>
+<div id="lift_chart" class="rotated" style="margin-top:30%"></div>
 <script type="text/javascript">
 
 var __eon_pubnub = new PubNub({
@@ -16,22 +26,23 @@ chart = eon.chart({
   history: false,
   flow: true,
   rate: 1000,
-  limit: 5,
+  limit: 50,
+  xType: false,
   generate: {
     bindto: "#lift_chart",
     data: {
       colors: {"sway":"#D70060","height":"#E54028"},
-      type: "line"
+      type: "spline"
     },
     transition: {
       duration: 100
     },
     axis: {
       x: {
-        label: "sway"
+        label: "height"
       },
       y: {
-        label: "height"
+        label: "sway"
       }
     },
     grid: {
@@ -46,7 +57,7 @@ chart = eon.chart({
      show: true
     },
     point: {
-      show: true
+      show: false
     }
   },
   transform: function(message) {
@@ -57,7 +68,6 @@ chart = eon.chart({
         //var message = eon.c.flatten(message.eon);
         var o = {};
         o["sway"] = json_data.coordinates.sway;
-        o["height"] = json_data.coordinates.height;
 
     }
     return {
