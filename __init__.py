@@ -33,7 +33,7 @@ def squad():
 @app.route('/sessions/<id>')
 def sessionselection(id):
     cursor = mysql.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM session WHERE session_id = %s', (id))
+    cursor.execute('SELECT * FROM session WHERE session_id = ' + str(id))
     lift = cursor.fetchone()
     # If account exists in trainee table in  database
     if lift:
@@ -57,7 +57,7 @@ def history():
 
     cursor = mysql.cursor(dictionary=True)
     traineeid = session['trainee_id']
-    cursor.execute('SELECT * FROM history WHERE trainee_id = %s', str(traineeid))
+    cursor.execute('SELECT * FROM history WHERE trainee_id = ' + str(traineeid))
     data = cursor.fetchall()
 
     return checkLoginOrRedirectWithData('session_selection.html', data)
