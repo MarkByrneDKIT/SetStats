@@ -35,6 +35,8 @@ GPIO.output(TRIG, 0)
 GPIO.setup(BUZZER, GPIO.OUT)
 GPIO.setup(ECHO, GPIO.IN)
 
+beepCount = 0
+
 class bcolors:
     OKGREEN = '\033[92m'
     WARNING = '\033[93m'
@@ -50,7 +52,8 @@ def beep(repeat):
             time.sleep(0.001)
             GPIO.output(BUZZER, False)
             time.sleep(0.001)
-        time.sleep(0.25)
+        time.sleep(.175)
+
 
 # collects data from sensors and publishes to pubnub
 def collectSensorData():
@@ -91,10 +94,11 @@ def collectSensorData():
                 # If the accelerometer reads higher than 15cm or less than -15cm, it's considered a fail and user is alerted.
                 if (sway >= 3 or sway <= -3):
                     messageColour = bcolors.FAIL
-                    beep(1)
+                    beep(5)
                 # If the accelerometer reads higher than 5 but less than 15 and vice versa, it is considered a "good" lift.
                 elif (sway > 2 and sway < 3 or sway < -2 and sway < -3):
                     messageColour = bcolors.WARNING
+                    beep(1)
                 # Otherwise it is considered a "perfect" lift
                 else:
                     messageColour = bcolors.OKGREEN
@@ -103,6 +107,7 @@ def collectSensorData():
                 print(messageColour + f"{'{:.2f}'.format(sway)}" + "cm" + bcolors.ENDC)
                 print(messageColour + f"{'{:.2f}'.format(height)}" + "cm" + bcolors.ENDC)
                 print("")
+
 
                 current_time = (time.time() - start)
                 tilt = f"{'{:.2f}'.format(tilt)}"
