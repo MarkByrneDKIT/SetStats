@@ -270,7 +270,7 @@ ALTER TABLE `session`
 -- Constraints for table `trainee`
 --
 ALTER TABLE `trainee`
-  ADD CONSTRAINT `trainee_ibfk_1` FOREIGN KEY (`trainer_id`) REFERENCES `trainer` (`trainer_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `trainee_ibfk_1` FOREIGN KEY (`trainer_id`) REFERENCES `trainer` (`trainer_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
