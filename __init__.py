@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from flask_mysqldb import MySQL
-import MySQLdb.cursors
+import mysql.connector
 import re
 import hashlib
 
@@ -8,16 +7,13 @@ app = Flask(__name__)
 
 app.secret_key = 'secret key'
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'setstats'
-
-# from . import myDB, PB
-# PB.grant_access("SetStatsChart", True, True)
-
-# Intialize MySQL
-mysql = MySQL(app)
+#password = os.getenv('MYSQL_PASSWORD')     --auto gets password need to fix
+mysql = mysql.connector.connect(
+  host="localhost",
+  user="root",
+  password= "",
+  database="setstats"
+)
 
 
 @app.route('/')
@@ -36,7 +32,7 @@ def squad():
 
 @app.route('/sessions/<id>')
 def sessionselection(id):
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor = mysql.cursor(dictionary=True)
     cursor.execute('SELECT * FROM session WHERE session_id = %s', (id))
     lift = cursor.fetchone()
     # If account exists in trainee table in  database
@@ -59,7 +55,7 @@ def history():
     if not loggedIn():
         return redirect("/")
 
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor = mysql.cursor(dictionary=True)
     traineeid = session['trainee_id']
     cursor.execute('SELECT * FROM history WHERE trainee_id = %s', str(traineeid))
     data = cursor.fetchall()
@@ -98,7 +94,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.cursor(dictionary=True)
         cursor.execute('SELECT * FROM trainee WHERE username = %s AND password = %s', (username, password,))
         # Fetch  record and return result
         trainee = cursor.fetchone()
@@ -129,7 +125,7 @@ def register():
         password = request.form['password']
         hash_pass = hashlib.md5(password.encode("utf-8")).hexdigest()
         # Check if account exists using MySQL
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.cursor(dictionary=True)
         cursor.execute('SELECT * FROM trainee WHERE username = %s', ([username]))
         exists = cursor.fetchone()
         if exists:
@@ -158,7 +154,7 @@ def trainerLogin():
         username = request.form['username']
         password = request.form['password']
 
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.cursor(dictionary=True)
         cursor.execute('SELECT * FROM trainer WHERE username = %s AND password = %s', (username, password,))
         # Fetch  record and return result
         trainer = cursor.fetchone()
@@ -188,7 +184,7 @@ def trainerRegister():
         username = request.form['username']
         password = request.form['password']
         # Check if account exists using MySQL
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor = mysql.cursor(dictionary=True)
         cursor.execute('SELECT * FROM trainer WHERE username = %s', ([username]))
         exists = cursor.fetchone()
         if exists:
