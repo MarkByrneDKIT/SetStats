@@ -45,8 +45,6 @@ def sessionselection(id):
         lift['rep_num'] = lift['rep_num']
         lift['set_num'] = lift['set_num']
 
-        return redirect("/")
-
     return checkLoginOrRedirect('history.html')
 
 
@@ -211,4 +209,6 @@ def logout():
 
 
     return redirect(url_for('login'))
-app.run(debug=True)
+
+if __name__ == '__init__':
+    app.run()
