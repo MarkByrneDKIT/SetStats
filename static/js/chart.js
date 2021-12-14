@@ -1,8 +1,28 @@
 function makeChart(best){
 console.log("Hello World")
-console.log(best)
-var xValues = [-1.02, -1.19, -1.89, -1.38, 2.10, -1.47, -1.04, -5.20, 2.23, 0.41, 1.43];
-var yValues = [0.00, 4.23, 9.12, 17.34, 23.44, 27.12, 36.19, 47.48, 54.25, 63.12, 71.14, 75.45];
+var mes = JSON.stringify(best);
+//var json_data = JSON.parse(mes);
+console.log(mes)
+var coordinates = mes.split('coordinates')[1]
+coordinates = mes.split(': [')[1];
+coordinates = coordinates.split(']}')[0];
+coordinates = coordinates.split('], [');
+coordinates[0] = coordinates[0].split('[')[1];
+coordinates[coordinates.length - 1] = coordinates[coordinates.length - 1].split(']')[0];
+var xValues= [];
+var yValues= [];
+var maximum = 0;
+for(let i =0; i < coordinates.length; i++)
+{
+    temp = coordinates[i].split(', ')
+    xValues.push(temp[0])
+    yValues.push(temp[1])
+
+}
+console.log(xValues)
+console.log(yValues)
+
+
 new Chart("myChart", {
   type: "line",
   data: {
@@ -19,7 +39,7 @@ new Chart("myChart", {
     legend: {display: false},
     scales: {
       reverse: true,
-      yAxes: [{ticks: {min: -15, max:15}}],
+      yAxes: [{ticks: {min: -5, max:5}}],
 
     }
   }
