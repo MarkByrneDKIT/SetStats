@@ -32,17 +32,18 @@ def squad():
 @app.route('/sessions/<id>')
 def sessionselection(id):
     cursor = mysql.cursor(dictionary=True)
-    cursor.execute('SELECT * FROM session WHERE session_id = ' + str(id))
-    lift = cursor.fetchone()
+    cursor.execute('SELECT ST_AsGeoJSON(best_xy) FROM session WHERE session_id = ' + str(id))
+    session['best_xy'] = cursor.fetchone()
+
     # If account exists in trainee table in  database
-    if lift:
-        # Create session data
-        lift['id'] = lift['session_id']
-        lift['best_xy'] = lift['best_xy']
-        lift['worst_xy'] = lift['worst_xy']
-        lift['time'] = lift['time']
-        lift['rep_num'] = lift['rep_num']
-        lift['set_num'] = lift['set_num']
+#    if lift:
+ #       # Create session data
+  #      session['sessionId'] = lift['session_id']
+   #     session['best_xy'] = str(lift['best_xy'])
+    #    session['worst_xy'] = str(lift['worst_xy'])
+     #   session['time'] = str(lift['time'])
+      #  session['rep_num'] = lift['rep_num']
+       # session['set_num'] = lift['set_num']
 
     return checkLoginOrRedirect('history.html')
 
@@ -208,5 +209,5 @@ def logout():
 
     return redirect(url_for('login'))
 
-if __name__ == '__init__':
-    app.run()
+#if __name__ == '__init__':
+app.run(debug= True)
