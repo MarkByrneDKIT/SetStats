@@ -37,7 +37,7 @@ GPIO.setup(ECHO, GPIO.IN)
 
 beepCount = 0
 rep = 0
-set = 0
+set = 1
 
 class bcolors:
     OKGREEN = '\033[92m'
@@ -134,8 +134,9 @@ def collectSensorData():
                 height = f"{'{:.2f}'.format(height)}"
 
                 # Publishes coords to pubnub
+                publish(my_channel, {"coordinates": {"sway":sway, "height":height}})
                 publish(my_channel, {"tilt": tilt})
-                publish(my_channel, {"coordinates": {"sway":sway, "height":height}, "lift": {"set":set, "rep":rep}})
+                publish(my_channel, {"lift": {"set": set, "rep": rep}})
                 # Time between each reading
                 time.sleep(.15)
             except Exception:
