@@ -36,6 +36,8 @@ GPIO.setup(BUZZER, GPIO.OUT)
 GPIO.setup(ECHO, GPIO.IN)
 
 beepCount = 0
+rep = 0
+set = 0
 
 class bcolors:
     OKGREEN = '\033[92m'
@@ -57,6 +59,9 @@ def beep(repeat):
 
 # collects data from sensors and publishes to pubnub
 def collectSensorData():
+    max = 0
+    global rep
+    global set
     data["start"] = False
     start = time.time()
     while True:
@@ -78,6 +83,18 @@ def collectSensorData():
                 tilt = mpu.get_gyro_data()['z']
                 sway = mpu.get_accel_data()['z']
                 height = ((stop - start) * 17000)
+
+                # rep/set count
+                if height > max:
+                    max = height
+
+                if height <= (max / 10):
+                    rep += 1
+                    max = 0
+                if rep == 12:
+                    set += 1
+                    rep = 0
+
 
                 # at rest accelerometer doesnt read 0, this combats this by changing values between -0.75 and -0.95 to 0
                 if(sway <= -0.75 and sway >=-0.95):
@@ -106,6 +123,8 @@ def collectSensorData():
                 print(bcolors.BOLD + f"{'{:.2f}'.format(tilt)}" + bcolors.ENDC)
                 print(messageColour + f"{'{:.2f}'.format(sway)}" + "cm" + bcolors.ENDC)
                 print(messageColour + f"{'{:.2f}'.format(height)}" + "cm" + bcolors.ENDC)
+                print("Sets: ", set)
+                print("Reps: ", rep)
                 print("")
 
 
@@ -116,7 +135,7 @@ def collectSensorData():
 
                 # Publishes coords to pubnub
                 publish(my_channel, {"tilt": tilt})
-                publish(my_channel, {"coordinates": {"sway":sway, "height":height}})
+                publish(my_channel, {"coordinates": {"sway":sway, "height":height}, "lift": {"set":set, "rep":rep}})
                 # Time between each reading
                 time.sleep(.15)
             except Exception:
