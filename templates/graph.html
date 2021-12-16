@@ -15,8 +15,8 @@
 
 <div id="lift_chart" class="rotated"></div>
 <script type="text/javascript">
-	var xy={};
-	var prevRep= 0;
+	//var xy={};
+	//var prevRep= 0;
 	var __eon_pubnub = new PubNub({
   subscribeKey: "sub-c-76598f48-3f26-11ec-b886-526a8555c638",
   authkey: "SetStatsChart",
@@ -73,28 +73,24 @@ chart = eon.chart({
         o["sway"] = json_data.coordinates.sway;
         o["height"] = json_data.coordinates.height;
         document.getElementById("h").textContent= o["height"];
-        xy.push(o["sway"]);
-        xy.push(o["height"]);
+
+        //console.log(json_data.lift.rep);
+
+        //xy.push(o["sway"]);
+        //xy.push(o["height"]);
 
     }
-    if(json_data.hasOwnProperty('rep')){
+  if(json_data.hasOwnProperty('rep')){
+
 		curRep = json_data.rep.rep;
+		console.log(curRep);
+		document.getElementById("r").textContent= curRep;
 
-		if(curRep > prevRep)
-		{
-			//$.get( "/getmethod/<xy>" );
-			//xy.
-		}
+		curSet = json_data.rep.set;
+		console.log(curSet);
+		document.getElementById("s").textContent= curSet;
 
-        var message = eon.c.flatten(message.eon);
-        var o = {};
-        curSet = json_data.rep.set;
 
-        console.log(o["curRep"])
-        //document.getElementById("h").textContent= o["height"];
-        //document.getElementById("r").textContent= curRep;
-
-		prevRep = curRep;
     }
     return {
       eon: o
@@ -110,5 +106,6 @@ chart = eon.chart({
 				<br>
 				<h1>Height:<span id="h"></span></h1>
 				<h1>Rep:<span id="r"></span></h1>
+				<h1>Set:<span id="s"></span></h1>
 		</div>
 {% endblock %}
