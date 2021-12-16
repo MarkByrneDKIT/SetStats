@@ -3,7 +3,7 @@
 {% block body %}
 <style>
 
-      .rotated {
+      #rotated {
         -webkit-transform: rotate(90deg);
         -moz-transform: rotate(90deg);
         -o-transform: rotate(90deg);
@@ -11,10 +11,13 @@
       }
 
 </style>
-<div id="lift_chart" class="rotated" style="margin-top:30%"></div>
-<script type="text/javascript">
 
-var __eon_pubnub = new PubNub({
+
+<div id="lift_chart" class="rotated"></div>
+<script type="text/javascript">
+	var xy={};
+	var prevRep= 0;
+	var __eon_pubnub = new PubNub({
   subscribeKey: "sub-c-76598f48-3f26-11ec-b886-526a8555c638",
   authkey: "SetStatsChart",
 });
@@ -26,23 +29,22 @@ chart = eon.chart({
   history: false,
   flow: true,
   rate: 1000,
-  limit: 50,
-  xType: false,
+  limit: 5,
   generate: {
     bindto: "#lift_chart",
     data: {
       colors: {"sway":"#D70060","height":"#E54028"},
-      type: "spline"
+      type: "line"
     },
     transition: {
       duration: 100
     },
     axis: {
       x: {
-        label: "height"
+        label: "sway"
       },
       y: {
-        label: "sway"
+        label: "height"
       }
     },
     grid: {
@@ -57,18 +59,42 @@ chart = eon.chart({
      show: true
     },
     point: {
-      show: false
+      show: true
     }
   },
   transform: function(message) {
     var msg = JSON.stringify(message);
     var json_data = JSON.parse(msg);
+	console.log(json_data);
    if(json_data.hasOwnProperty('coordinates')){
 
         //var message = eon.c.flatten(message.eon);
         var o = {};
         o["sway"] = json_data.coordinates.sway;
+        o["height"] = json_data.coordinates.height;
+        document.getElementById("h").textContent= o["height"];
+        xy.push(o["sway"]);
+        xy.push(o["height"]);
 
+    }
+    if(json_data.hasOwnProperty('rep')){
+		curRep = json_data.rep.rep;
+
+		if(curRep > prevRep)
+		{
+			//$.get( "/getmethod/<xy>" );
+			//xy.
+		}
+
+        var message = eon.c.flatten(message.eon);
+        var o = {};
+        curSet = json_data.rep.set;
+
+        console.log(o["curRep"])
+        //document.getElementById("h").textContent= o["height"];
+        //document.getElementById("r").textContent= curRep;
+
+		prevRep = curRep;
     }
     return {
       eon: o
@@ -79,6 +105,10 @@ chart = eon.chart({
 });
 </script>
 		<div>
-			<a type="button" class="lift" id="lift" onclick="handleClick(this);">Start Lift</a>
+				<input type="checkbox" id="lift" onclick="handleClick(this);"/>
+				<label for = "lift">Start Lift</label>
+				<br>
+				<h1>Height:<span id="h"></span></h1>
+				<h1>Rep:<span id="r"></span></h1>
 		</div>
 {% endblock %}

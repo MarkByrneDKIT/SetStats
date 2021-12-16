@@ -209,5 +209,9 @@ def logout():
 
     return redirect(url_for('login'))
 
+@app.route('/getmethod/<jsdata>')
+def get_javascript_data(jsdata):
+    return jsdata
+
 #if __name__ == '__init__':
 app.run(debug= True)

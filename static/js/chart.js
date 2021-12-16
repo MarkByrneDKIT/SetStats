@@ -39,9 +39,76 @@ new Chart("myChart", {
     legend: {display: false},
     scales: {
       reverse: true,
-      yAxes: [{ticks: {min: -5, max:5}}],
+      yAxes: [{ticks: {min: -5, max:5, maxRotation: -90, minRotation: -90}}],
+      xAxes: [{ticks: {maxRotation: -90, minRotation: -90}}],
 
     }
   }
+});
+}
+
+function liveChart(){
+var __eon_pubnub = new PubNub({
+  subscribeKey: "sub-c-76598f48-3f26-11ec-b886-526a8555c638",
+  authkey: "SetStatsChart",
+});
+var __eon_cols = ["sway", "height"];
+var __eon_labels = {};
+chart = eon.chart({
+  pubnub: __eon_pubnub,
+  channels: ["setstats-pi-channel"],
+  history: false,
+  flow: true,
+  rate: 1000,
+  limit: 5,
+  generate: {
+    bindto: "#lift_chart",
+    data: {
+      colors: {"sway":"#D70060","height":"#E54028"},
+      type: "line"
+    },
+    transition: {
+      duration: 100
+    },
+    axis: {
+      x: {
+        label: "sway"
+      },
+      y: {
+        label: "height"
+      }
+    },
+    grid: {
+      x: {
+        show: false
+      },
+      y: {
+        show: false
+      }
+    },
+    tooltip: {
+     show: true
+    },
+    point: {
+      show: true
+    }
+  },
+  transform: function(message) {
+    var msg = JSON.stringify(message);
+    var json_data = JSON.parse(msg);
+   if(json_data.hasOwnProperty('coordinates')){
+
+        //var message = eon.c.flatten(message.eon);
+        var o = {};
+        o["sway"] = json_data.coordinates.sway;
+        o["height"] = json_data.coordinates.height;
+
+    }
+    return {
+      eon: o
+    };
+
+  },
+
 });
 }
