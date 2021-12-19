@@ -55,6 +55,7 @@ CREATE TABLE `current_session` (
   `trainee_id` int(50) NOT NULL,
   `rep_num` int(50) NOT NULL,
   `set_num` int(50) NOT NULL,
+  `weight` int(50) NOT NULL,
   `time` time NOT NULL,
   `date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -63,8 +64,8 @@ CREATE TABLE `current_session` (
 -- Dumping data for table `current_session`
 --
 
-INSERT INTO `current_session` (`session_id`, `trainee_id`, `rep_num`, `set_num`, `time`, `date`) VALUES
-(1, 1, 3, 2, '18:11:00', '2021-11-03');
+INSERT INTO `current_session` (`session_id`, `trainee_id`, `rep_num`, `set_num`, `weight`, `time`, `date`) VALUES
+(1, 1, 3, 2, 100, '18:11:00', '2021-11-03');
 
 -- --------------------------------------------------------
 
@@ -81,7 +82,9 @@ CREATE TABLE `session` (
   `worst_xy` geometry NOT NULL,
   `time` time(6) NOT NULL,
   `rep_num` int(50) NOT NULL,
-  `set_num` int(50) NOT NULL
+  `set_num` int(50) NOT NULL,
+  `weight` int(50) NOT NULL,
+  `comment` varchar(50) DEFAULT 'No Comment'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
